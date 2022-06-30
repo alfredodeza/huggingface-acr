@@ -15,17 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Authenticate to Docker hub
-      uses: docker/login-action@v1
+    - uses: azure/docker-login@v1
       with:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        login-server: alfredo.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    - name: build and push container to Docker Hub
-      uses: docker/build-push-action@v2
-      with:
-        context: ./
-        file: ./Dockerfile
-        push: true
-        tags: alfredodeza/huggingface-fastapi:latest
+    - run: |
+        docker build . -t alfredo.azurecr.io/huggingface-fastapi:${{ github.sha }}
+        docker push alfredo.azurecr.io/huggingface-fastapi:${{ github.sha }}
 
